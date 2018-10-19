@@ -24,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String ERROR_MATCH_PASSWORD_VALIDATION = "Password doesn't match";
     public static final String USERS_INFO_VALUE = "usersInfo";
     public static final String USER_KEY_VALUE = "key";
+    public static final String USER_NAME = "name: ";
+    public static final String USER_SURNAME = "surname: ";
+    public static final String USER_PHONE = "phone: ";
+    public static final String USER_EMAIL = "email: ";
+    public static final String USER_PASSWORD = "password: ";
 
     private static final Pattern NAME_PATTERN = Pattern.compile("[A-Z][a-z]+");
     private static final Pattern PASSWORD_PATTERN =
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //ініціалізація активності
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firstNameEditText = findViewById(R.id.etFirstName);
@@ -59,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         viewListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openListActivity = new Intent(MainActivity.this, ListActivity.class);
+                Intent openListActivity = new Intent(MainActivity.this, ListActivity.class);//start new activity on button click
                 startActivity(openListActivity);
             }
         });
@@ -72,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 isDataValid();
             }
         });
-
     }
 
     private boolean isDataValid() {
@@ -85,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         if (validFirstName && validLastName && validEmail && validPhone && validPassword && validSubmitPassword) {
             saveInfo();
             clearInputData();
-
         }
         return true;
     }
@@ -145,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean isPasswordValid() {
         String password = passwordEditText.getText().toString();
 
-
         if (password.isEmpty()) {
             passwordEditText.setError(ERROR_INPUT_VALIDATION);
             return false;
@@ -176,14 +178,16 @@ public class MainActivity extends AppCompatActivity {
     private void saveInfo() {
         SharedPreferences sharedPref = getSharedPreferences(USERS_INFO_VALUE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        int count = sharedPref.getAll().size() + 1;
+        int count = sharedPref.getAll().size() + 1; //get the number of entries you can use
 
         Set<String> user = new HashSet<>();
-        user.add("name: " + firstNameEditText.getText().toString());
-        user.add("surname: " + lastNameEditText.getText().toString());
-        user.add("phone: " + phoneEditText.getText().toString());
+        user.add(USER_NAME + firstNameEditText.getText().toString());
+        user.add(USER_SURNAME  + lastNameEditText.getText().toString());
+        user.add(USER_PHONE + phoneEditText.getText().toString());
+        user.add(USER_PASSWORD + passwordEditText.getText().toString());
+        user.add(USER_EMAIL + emailEditText.getText().toString());
         editor.putStringSet(USER_KEY_VALUE + count, user);
-        editor.apply();
+        editor.apply(); //commit to the object we are calling
     }
 
     private void clearInputData() {
