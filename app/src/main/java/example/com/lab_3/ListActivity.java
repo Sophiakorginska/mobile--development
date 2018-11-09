@@ -26,25 +26,28 @@ public class ListActivity extends MainActivity {
         displayData();
     }
 
-    private Map<String, String> getUsers() {
+        private Map<String, String> getUsers() {
         SharedPreferences sharedPref = getSharedPreferences(USERS_INFO_VALUE, Context.MODE_PRIVATE);
         Map<String, String> usersMap = new HashMap<>();
 
         Set<String> user;
-        for (int i = 1; i < sharedPref.getAll().size() + 1; i++) {
+        int count = sharedPref.getAll().size() + 1;
+        for (int i = 1; i < count; i++) {
             user = sharedPref.getStringSet(USER_KEY_VALUE + i, null);
-            assert user != null;
-            ArrayList<String> userInfo = new ArrayList<>(user);
+            assert user != null; //protect constructor
+            ArrayList<String> userInfo = new ArrayList<>(user); //create object list
             String fullName, surname = "", name = "", phone = "";
-            for (int j = 0; j < userInfo.size(); j++) {
+            int userInfoCount = userInfo.size();
+            for (int j = 0; j < userInfoCount; j++) {
                 String information = userInfo.get(j);
-                if (information.contains("surname: ")) {
-                    surname = information.split("surname: ")[1];
-                } else if (information.contains("name: ")) {
-                    name = information.split("name: ")[1];
-                } else {
-                    phone = information.split("phone: ")[1];
+                if (information.contains(USER_SURNAME)) {
+                    surname = information.split(USER_SURNAME)[1];
+                } else if (information.contains(USER_NAME)) {
+                    name = information.split(USER_NAME)[1];
+                } else if (information.contains(USER_PHONE)){
+                    phone = information.split(USER_PHONE)[1];
                 }
+
             }
             fullName = name + " " + surname;
             usersMap.put(fullName, phone);
@@ -55,16 +58,16 @@ public class ListActivity extends MainActivity {
     private void displayData() {
         List<HashMap<String, String>> listItems = new ArrayList<>();
         SimpleAdapter adapter = new SimpleAdapter(this, listItems, R.layout.list_item,
-                new String[]{"First Line", "Second Line"}, new int[]{R.id.full_name, R.id.phone});
+                new String[]{"First Line", "Second Line"}, new int[]{R.id.full_name, R.id.phone});//create adapter
 
-        Iterator it = getUsers().entrySet().iterator();
-        while (it.hasNext()) {
+        Iterator it = getUsers().entrySet().iterator(); //Iterator interface enables you to cycle through a collection
+        while (it.hasNext()) { //returns true if iteration has more elements
             HashMap<String, String> resultsMap = new HashMap<>();
             HashMap.Entry pair = (Map.Entry) it.next();
             resultsMap.put("First Line", pair.getKey().toString());
             resultsMap.put("Second Line", pair.getValue().toString());
             listItems.add(resultsMap);
         }
-        list.setAdapter(adapter);
+        list.setAdapter(adapter);//assign adapter to the list
     }
 }
