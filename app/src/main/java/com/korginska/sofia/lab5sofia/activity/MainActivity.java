@@ -1,11 +1,15 @@
 package com.korginska.sofia.lab5sofia.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.korginska.sofia.lab5sofia.DrinkInterface;
 import com.korginska.sofia.lab5sofia.R;
@@ -37,12 +41,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
 
         initRetrofit();
-        getDrinks();
-        Log.i("TAG", "LALAL"+Integer.toString(mDrinks.size()));
+        checkAndGetDrinks();
+
         initRecyclerView();
         initRefreshLayout();
     }
 
+    private void checkAndGetDrinks() {
+        if (isNetworkConnected()) {
+            getDrinks();
+        } else {
+            Toast.makeText(getApplicationContext(), "No internet connection.",
+                    Toast.LENGTH_SHORT).show();
+            startErrorIntent();
+        }
+    }
+
+    private void startErrorIntent() {
+        Intent errorIntent = new Intent(MainActivity.this, ErrorActivity.class);
+        startActivity(errorIntent);
+    }
     private void initRetrofit() {
         Log.i("TAG", "init retrofit");
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -59,12 +77,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 initRetrofit();
-                getDrinks();
+                checkAndGetDrinks();
             }
         });
     }
-
-
 
     private void getDrinks() {
         call = drinkInterface.imageOfAlcohol();
@@ -80,13 +96,11 @@ public class MainActivity extends AppCompatActivity {
                     List<Drink> drinkList = example.getDrinks();
                     mDrinks.addAll(drinkList);
                     Log.i("TAG", "getDrinks():" + Integer.toString(mDrinks.size()));
-                    for (Drink drink : mDrinks){
-                        Log.i("f","ingredient"+drink.getStrIngredient2());
+                    for (Drink drink : mDrinks) {
+                        Log.i("f", "ingredient" + drink.getStrIngredient2());
                     }
                     recyclerViewAdapter.addAll(mDrinks);
                     swipeContainer.setRefreshing(false);
-
-
                 }
             }
 
@@ -95,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("TAG", "error: " + t.toString());
             }
         });
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     private void initRecyclerView() {
