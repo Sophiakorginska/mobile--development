@@ -1,11 +1,11 @@
-package com.korginska.sofia.lab5sofia;
+package com.korginska.sofia.lab5sofia.data.api;
 
 import com.korginska.sofia.lab5sofia.model.Example;
 
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 
 public interface DrinkInterface {
     @GET("/api/json/v1/1/search.php?s=margarita")
-    Call<Example>imageOfAlcohol();
+    public Observable<Example> imageOfAlcohol();
 }
