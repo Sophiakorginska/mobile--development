@@ -3,7 +3,9 @@ package com.korginska.sofia.lab5sofia.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Drink {
+import java.io.Serializable;
+
+public class Drink implements Serializable {
 
     @SerializedName("idDrink")
     @Expose
